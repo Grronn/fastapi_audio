@@ -16,7 +16,7 @@ async def root():
 class TextRequest(BaseModel):
     text: str
 
-@app.post("/audio")
+@app.post("/text")
 async def process_text(request: TextRequest):
     try:
         # Получаем текст из запроса
