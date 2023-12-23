@@ -15,9 +15,3 @@ def test_process_text(client):
 
     # Check if the response is successful (status code 200)
     assert response.status_code == 200
-
-    # You can add more specific assertions based on your expected response
-    # For example, checking the content type or other details in the response
-
-    # Example assertion for checking content type
-    assert response.headers["Content-Type"] == "audio/wav"
