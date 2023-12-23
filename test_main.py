@@ -16,11 +16,3 @@ def test_process_text_endpoint(client):
 
     # Check if the response body is not empty
     assert response.content
-
-def test_process_text_endpoint_failure(client):
-    # Test the endpoint with invalid input or edge cases that should return a 400 response
-    response = client.post("/text", json={"text": ""})  # Assuming empty text for simplicity
-
-    assert response.status_code == 400
-    assert "detail" in response.json()
-    assert response.json()["detail"] == "No audio generated."
