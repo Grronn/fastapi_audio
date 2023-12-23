@@ -22,6 +22,7 @@ def test_process_text(client):
     # Get the length of the generated audio text
     # Assuming the content is a dictionary with a "text" key
 
+    generated_audio_text = response.json()["text"]
     generated_audio_text = generated_audio_text.decode('utf-8')
     generated_audio_length = len(generated_audio_text)
 
