@@ -1,10 +1,21 @@
+import io
 import pytest
+import wave
 from fastapi.testclient import TestClient
 from main import app  # Assuming your FastAPI app is in a file named main.py
 
 @pytest.fixture
 def client():
     return TestClient(app)
+
+def is_valid_wav(data):
+    try:
+        # Create a Wave_read object
+        with wave.open(io.BytesIO(data), 'rb') as wave_file:
+            # Check if it's a valid WAV file
+            return wave_file.getnframes() > 0
+    except Exception as e:
+        return False
 
 def test_process_text(client):
     # Define your test input data
@@ -16,15 +27,8 @@ def test_process_text(client):
     # Check if the response is successful (status code 200)
     assert response.status_code == 200
 
-    # Get the length of the original input text
-    input_text_length = len(test_data["text"])
+    # Get the audio content from the response
+    audio_content = response.content
 
-    # Get the length of the generated audio text
-    # Assuming the content is a dictionary with a "text" key
-
-    generated_audio_text = response.json()["text"]
-    generated_audio_text = generated_audio_text.decode('utf-8')
-    generated_audio_length = len(generated_audio_text)
-
-    # Assert that the generated audio is shorter than the input text
-    assert generated_audio_length < input_text_length
+    # Assert that the content is a valid WAV file
+    assert is_valid_wav(audio_content)
