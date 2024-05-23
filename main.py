@@ -133,3 +133,23 @@ async def process_text(request: TextRequest):
             return JSONResponse(content={"detail": "No audio generated."}, status_code=400)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/translate")
+async def translate_text(request: TextRequest):
+    try:
+        text = request.text
+        model_name = "Helsinki-NLP/opus-mt-en-ru"
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+        text = preprocess_text(text)
+
+
+        input_ids = tokenizer(text, return_tensors="pt")
+        output_ids = model.generate(input_ids, max_length=len(input_ids) + 50)
+        translation = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+
+
+        return JSONResponse(content={"translation": translation}, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
