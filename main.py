@@ -79,3 +79,24 @@ async def process_text(request: TextRequest):
             return JSONResponse(content={"detail": "No audio generated."}, status_code=400)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+        
+@app.post("/vladislav")
+async def process_vladislav(request: TextRequest):
+    try:
+        name = request.text
+        if name.lower() != "vladislav":
+            response_data = {"detail": "Invalid input data"}
+            return JSONResponse(content=response_data, status_code=400)
+
+        processor = AutoProcessor.from_pretrained("suno/bark-small", use_fast=False)
+        model = AutoModel.from_pretrained("suno/bark-small")
+
+        speech_values = generate_speech("Vladislav Sanduian", model, processor)
+
+        if speech_values is not None and len(speech_values) > 0:
+            return generate_audio_response(speech_values, "Vladislav Sanduian", model)
+        else:
+            response_data = {"detail": "No audio generated"}
+            return JSONResponse(content=response_data, status_code=400)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
