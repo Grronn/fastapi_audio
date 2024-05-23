@@ -111,3 +111,25 @@ async def process_text(request: TextRequest):
             return JSONResponse(content={"detail": "No audio generated."}, status_code=400)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/olegtext")
+async def process_text(request: TextRequest):
+    try:
+        article_text = request.text
+        model_name = "csebuetnlp/mT5_multilingual_XLSum"
+        tokenizer = AutoTokenizer.from_pretrained(model_name, legacy=False)
+        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+        summary = generate_summary(preprocess_text(article_text), model, tokenizer)
+
+        processor = AutoProcessor.from_pretrained("suno/bark-small", use_fast=False)
+        model = AutoModel.from_pretrained("suno/bark-small")
+
+        speech_values = generate_speech(summary, model, processor)
+
+        if speech_values is not None and len(speech_values) > 0:
+            return generate_audio_response(speech_values, summary, model)
+        else:
+            return JSONResponse(content={"detail": "No audio generated."}, status_code=400)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
