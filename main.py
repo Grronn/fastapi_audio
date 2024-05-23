@@ -58,6 +58,16 @@ def generate_audio_response(speech_values, summary, model):
 
     return response
 
+
+@app.get("/health")
+async def health_check():
+    """
+    Проверка состояния сервиса.
+    Возвращает HTTP 200, если сервис функционирует нормально.
+    """
+    return Response(status_code=200)
+
+
 @app.post("/text")
 async def process_text(request: TextRequest):
     try:
