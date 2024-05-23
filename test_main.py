@@ -14,3 +14,20 @@ def test_process_text_endpoint(client):
     assert "generated_audio.wav" in response.headers["Content-Disposition"]
 
     assert response.content
+
+def test_process_text_endpoint(client):
+    response = client.post("/olegtext", json={"text": """Отжимания — одно из основных и наиболее распространенных упражнений. Они полезны не только
+для мышц груди, но также очень хороши для пресса, трицепсов, плечевых мышц и корпуса в целом.
+Отжимания можно делать в любом месте, и что самое замечательное — они совершенно бесплатны, вам
+не понадобятся ни дорогие тренажеры, ни абонемент в спортзал. Если вы хотите хорошо развить
+грудные и плечевые мышцы, то данная программа может стать замечательным началом. К тому же это
+здорово разовьет вашу силу воли.
+Чтобы улучшить свою форму и здоровье, вам нужно всего лишь посвятить упражнениям около 30
+минут в неделю и придерживаться этой программы как можно точнее. Обещаю, что вы станете
+чувствовать себя гораздо лучше и увереннее после пары первых тренировок. """})
+
+    assert response.status_code == 200
+    assert response.headers["Content-Type"] == "audio/wav"
+    assert "generated_audio.wav" in response.headers["Content-Disposition"]
+
+    assert response.content
